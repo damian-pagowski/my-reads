@@ -10,7 +10,7 @@ class Search extends Component {
     this.search = this.search.bind(this);
     this.debouncedOnChange = _.debounce(
       this.debouncedOnChange.bind(this),
-      1000
+      500
     );
   }
 
@@ -19,13 +19,28 @@ class Search extends Component {
   }
 
   state = {
+    query: "",
     books: [],
   };
 
-  search = query => {
-    BooksAPI.search(query).then(b => {
-      this.setState(() => ({ books: b }));
+  onSearch(query) {
+    const cleanedQuery = query.replace(/[^0-9a-zA-Z_ ]/g, "");
+    this.setState(() => ({ query: cleanedQuery }));
+
+    const keywords = cleanedQuery.split(/(\s+)/);
+    this.debouncedOnChange(keywords);
+  }
+  search = keywords => {
+    let results = [];
+    keywords.forEach(query => {
+      BooksAPI.search(query).then(b => {
+        if (b && !b.hasOwnProperty("error")) {
+          results.push(...b);
+        }
+        this.setState(() => ({ books: results }));
+      });
     });
+
   };
 
   render() {
@@ -37,8 +52,9 @@ class Search extends Component {
           </Link>
           <div className="search-books-input-wrapper">
             <input
-              onChange={event => this.debouncedOnChange(event.target.value)}
+              onChange={event => this.onSearch(event.target.value)}
               type="text"
+              value={this.state.query}
               placeholder="Search by title or author"
             />
           </div>
