@@ -9,12 +9,6 @@ import "./App.css";
 class BooksApp extends React.Component {
   state = {
     books: [],
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
     showSearchPage: false,
   };
 
@@ -24,13 +18,24 @@ class BooksApp extends React.Component {
     });
   }
 
+  updateBook = (bookToUpdate, newShelf) => {
+    let booksCopy = [...this.state.books];
+    const matchingBook = booksCopy.find(b => b.id === bookToUpdate.id);
+    if (matchingBook) {
+      matchingBook.shelf = newShelf;
+    } else {
+      bookToUpdate.shelf = newShelf;
+      booksCopy = [bookToUpdate, ...booksCopy];
+    }
+    BooksAPI.update(bookToUpdate, newShelf).then(() =>
+      this.setState({ books: booksCopy })
+    );
+  };
 
-  onUpdateCategory(id, category){
-    BooksAPI.update({id : id}, category)
-    .then(b => {
+  onUpdateCategory(id, category) {
+    BooksAPI.update({ id: id }, category).then(b => {
       this.setState(() => ({ books: b }));
     });
-
   }
 
   render() {
@@ -40,8 +45,7 @@ class BooksApp extends React.Component {
           exact
           path="/search"
           render={() =>
-            <Search/>
-            }
+            <Search onUpdateCategory={this.updateBook.bind(this)} />}
         />
 
         <Route
@@ -55,18 +59,24 @@ class BooksApp extends React.Component {
               <div className="list-books-content">
                 <div>
                   <BookShelf
+                    key={"currentlyReading"}
+                    onUpdateCategory={this.updateBook.bind(this)}
                     name={"Currently Reading"}
                     books={this.state.books.filter(
                       b => b.shelf === "currentlyReading"
                     )}
                   />
                   <BookShelf
+                    key={"wantToRead"}
+                    onUpdateCategory={this.updateBook.bind(this)}
                     name={"Want to Read"}
                     books={this.state.books.filter(
                       b => b.shelf === "wantToRead"
                     )}
                   />
                   <BookShelf
+                    key={"read"}
+                    onUpdateCategory={this.updateBook.bind(this)}
                     name={"Read"}
                     books={this.state.books.filter(b => b.shelf === "read")}
                   />
