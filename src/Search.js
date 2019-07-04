@@ -2,8 +2,22 @@ import React, { Component } from "react";
 import Book from "./Book";
 import { Link } from "react-router-dom";
 import * as BooksAPI from "./BooksAPI";
+import _ from "lodash";
 
 class Search extends Component {
+  constructor(props) {
+    super(props);
+    this.search = this.search.bind(this);
+    this.debouncedOnChange = _.debounce(
+      this.debouncedOnChange.bind(this),
+      1000
+    );
+  }
+
+  debouncedOnChange(query) {
+    this.search(query);
+  }
+
   state = {
     books: [],
   };
@@ -14,7 +28,6 @@ class Search extends Component {
     });
   };
 
-
   render() {
     return (
       <div className="search-books">
@@ -24,7 +37,7 @@ class Search extends Component {
           </Link>
           <div className="search-books-input-wrapper">
             <input
-              onChange={event => this.search(event.target.value)} // TODO remove
+              onChange={event => this.debouncedOnChange(event.target.value)}
               type="text"
               placeholder="Search by title or author"
             />
