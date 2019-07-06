@@ -31,11 +31,11 @@ class BooksApp extends React.Component {
     showSearchPage: false,
   };
 
-  componentDidMount() {
+  componentDidMount = () => {
     BooksAPI.getAll().then(b => {
       this.setState(() => ({ books: b }));
     });
-  }
+  };
 
   updateBook = (bookToUpdate, newShelf) => {
     let booksCopy = [...this.state.books];
@@ -57,7 +57,7 @@ class BooksApp extends React.Component {
     });
   };
 
-  render() {
+  render = () => {
     return (
       <div className="app">
         <Route
@@ -99,7 +99,7 @@ class BooksApp extends React.Component {
         />
       </div>
     );
-  }
+  };
 }
 
 export default BooksApp;

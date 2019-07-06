@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import default_book from "./img/book.png"
 
 class Book extends Component {
   change (event) {
@@ -14,13 +15,11 @@ class Book extends Component {
           <div className='book-top'>
             <div
               className='book-cover'
-              style={
-                book.imageLinks && {
+              style={{
                   width: 128,
                   height: 193,
-                  backgroundImage: `url(${book.imageLinks.thumbnail})`
-                }
-              }
+                  backgroundImage: `url(${book.imageLinks ? book.imageLinks.thumbnail : default_book})`
+              }}
             />
             <div className='book-shelf-changer'>
               <select onChange={this.change.bind(this)}>
