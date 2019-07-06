@@ -6,8 +6,26 @@ import Search from "./Search";
 import { Route, Link } from "react-router-dom";
 import "./App.css";
 
+const categories = [
+  {
+    name: "currentlyReading",
+    display: "Currently Reading",
+  },
+  {
+    name: "wantToRead",
+    display: "Want to Read",
+  },
+  {
+    name: "read",
+    display: "Read",
+  },
+  {
+    name: "none",
+    display: "None",
+  },
+];
+
 class BooksApp extends React.Component {
- 
   state = {
     books: [],
     showSearchPage: false,
@@ -33,11 +51,11 @@ class BooksApp extends React.Component {
     );
   };
 
-  onUpdateCategory(id, category) {
+  onUpdateCategory = (id, category) => {
     BooksAPI.update({ id: id }, category).then(b => {
       this.setState(() => ({ books: b }));
     });
-  }
+  };
 
   render() {
     return (
@@ -46,7 +64,10 @@ class BooksApp extends React.Component {
           exact
           path="/search"
           render={() =>
-            <Search onUpdateCategory={this.updateBook.bind(this)} />}
+            <Search
+              onUpdateCategory={this.updateBook.bind(this)}
+              categorizedBooks={this.state.books}
+            />}
         />
 
         <Route
@@ -59,28 +80,14 @@ class BooksApp extends React.Component {
               </div>
               <div className="list-books-content">
                 <div>
-                  <BookShelf
-                    key={"currentlyReading"}
-                    onUpdateCategory={this.updateBook.bind(this)}
-                    name={"Currently Reading"}
-                    books={this.state.books.filter(
-                      b => b.shelf === "currentlyReading"
-                    )}
-                  />
-                  <BookShelf
-                    key={"wantToRead"}
-                    onUpdateCategory={this.updateBook.bind(this)}
-                    name={"Want to Read"}
-                    books={this.state.books.filter(
-                      b => b.shelf === "wantToRead"
-                    )}
-                  />
-                  <BookShelf
-                    key={"read"}
-                    onUpdateCategory={this.updateBook.bind(this)}
-                    name={"Read"}
-                    books={this.state.books.filter(b => b.shelf === "read")}
-                  />
+                  {categories.map((c, index) =>
+                    <BookShelf
+                      key={index}
+                      onUpdateCategory={this.updateBook}
+                      name={c.display}
+                      books={this.state.books.filter(b => b.shelf === c.name)}
+                    />
+                  )}
                 </div>
               </div>
               <div className="open-search">
