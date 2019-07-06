@@ -6,7 +6,7 @@ import Search from "./Search";
 import { Route, Link } from "react-router-dom";
 import "./App.css";
 
-const categories = [
+export const categories = [
   {
     name: "currentlyReading",
     display: "Currently Reading",
@@ -65,7 +65,7 @@ class BooksApp extends React.Component {
           path="/search"
           render={() =>
             <Search
-              onUpdateCategory={this.updateBook.bind(this)}
+              onUpdateCategory={this.updateBook}
               categorizedBooks={this.state.books}
             />}
         />
